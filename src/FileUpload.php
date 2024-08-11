@@ -581,7 +581,7 @@ class FileUpload implements FileUploadInterface
      * @param array $file_array
      * @return array
      */
-    public static function multiple_file_array(array $file_array):array
+    public static function getUploadedFiles(array $file_array):array
     {
         $files = [];
         foreach ($file_array as $files_key => $files_array) {

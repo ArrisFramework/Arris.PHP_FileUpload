@@ -6,7 +6,7 @@ use Arris\Toolkit\FileUpload;
 
 if (isset($_FILES["file"])) {
 
-    $files = FileUpload::multiple_file_array($_FILES["file"]);
+    $files = FileUpload::getUploadedFiles($_FILES["file"]);
 
     foreach ($files as $file) {
         $upload = new FileUpload($file);

@@ -62,6 +62,7 @@ More examples in the "[examples](/examples)" directory.
 | `setMinDimensions(int $width, int $height)`    | Minimum image dimensions                                     |
 | `setAspectRatios(array $aspect_ratios)`        | Image aspect ratios that has to be (example: 1:1, 4:3, 16:9) |
 | `setErrorMessages(array $errors)`              | Custom error messages                                        |
+| `getUploadedFiles()`                           | Converts input array ($_FILES) to more usable form           |
 
 | Name            | Description                                      | Return  |
 |-----------------|--------------------------------------------------|---------|
