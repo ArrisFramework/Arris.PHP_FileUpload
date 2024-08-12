@@ -4,16 +4,16 @@ namespace Arris\Toolkit;
 
 class FileUpload implements FileUploadInterface
 {
-    const ERR_EMPTY_FILE    = 1;
-    const ERR_INVALID_EXT   = 2;
-    const ERR_INVALID_TYPE  = 3;
-    const ERR_LONG_SIZE     = 4;
-    const ERR_SMALL_SIZE    = 5;
-    const ERR_UNKNOWN_ERROR = 6;
-    const ERR_NOT_AN_IMAGE  = 7;
-    const ERR_MAX_DIMENSION = 8;
-    const ERR_MIN_DIMENSION = 9;
-    const ERR_ASPECT_RATIO  = 10;
+    const ERR_EMPTY_FILE    = 1001;
+    const ERR_INVALID_EXT   = 1002;
+    const ERR_INVALID_TYPE  = 1003;
+    const ERR_LONG_SIZE     = 1004;
+    const ERR_SMALL_SIZE    = 1005;
+    const ERR_UNKNOWN_ERROR = 1006;
+    const ERR_NOT_AN_IMAGE  = 1007;
+    const ERR_MAX_DIMENSION = 1008;
+    const ERR_MIN_DIMENSION = 1009;
+    const ERR_ASPECT_RATIO  = 1010;
 
     /**
      * Error ID
@@ -32,18 +32,28 @@ class FileUpload implements FileUploadInterface
      * Default error messages
      * @var array
      */
-    private array $error_messages = array(
-        self::ERR_EMPTY_FILE    => "No file selected.",
-        self::ERR_INVALID_EXT   => "Invalid file extension.",
-        self::ERR_INVALID_TYPE  => "Invalid file mime type.",
-        self::ERR_LONG_SIZE     => "File size is too large.",
-        self::ERR_SMALL_SIZE    => "File size is too small.",
-        self::ERR_UNKNOWN_ERROR => "Unknown error occurred.",
-        self::ERR_NOT_AN_IMAGE  => "The selected file must be an image.",
-        self::ERR_MAX_DIMENSION => "The dimensions of the image is too large.",
-        self::ERR_MIN_DIMENSION => "The dimensions of the image is too small.",
-        self::ERR_ASPECT_RATIO  => "The aspect ratio of the image is not as specified.",
-    );
+    private array $error_messages = [
+        UPLOAD_ERR_OK           =>  "No error",
+        UPLOAD_ERR_INI_SIZE     =>  "The uploaded file exceeds the upload_max_filesize directive in php.ini",
+        UPLOAD_ERR_FORM_SIZE    =>  "The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form.",
+        UPLOAD_ERR_PARTIAL      =>  "The uploaded file was only partially uploaded.",
+        UPLOAD_ERR_NO_FILE      =>  "No file was uploaded.",
+        UPLOAD_ERR_NO_TMP_DIR   =>  "Missing a temporary folder.",
+        UPLOAD_ERR_CANT_WRITE   =>  "Failed to write file to disk.",
+        UPLOAD_ERR_EXTENSION    =>  "A PHP extension stopped the file upload.",
+
+        self::ERR_EMPTY_FILE    =>  "No file selected.",
+        self::ERR_INVALID_EXT   =>  "Invalid file extension.",
+        self::ERR_INVALID_TYPE  =>  "Invalid file mime type.",
+        self::ERR_LONG_SIZE     =>  "File size is too large.",
+        self::ERR_SMALL_SIZE    =>  "File size is too small.",
+        self::ERR_UNKNOWN_ERROR =>  "Unknown error occurred.",
+        self::ERR_NOT_AN_IMAGE  =>  "The selected file must be an image.",
+        self::ERR_MAX_DIMENSION =>  "The dimensions of the image is too large.",
+        self::ERR_MIN_DIMENSION =>  "The dimensions of the image is too small.",
+        self::ERR_ASPECT_RATIO  =>  "The aspect ratio of the image is not as specified.",
+
+    ];
 
     /**
      * Customized error messages
@@ -384,6 +394,12 @@ class FileUpload implements FileUploadInterface
     public function check(): bool
     {
         if (empty($this->file) || !is_null($this->error)) {
+            return false;
+        }
+
+        // check internal error
+        if ($this->file['error'] !== UPLOAD_ERR_OK) {
+            $this->error = $this->file['error'];
             return false;
         }
 
