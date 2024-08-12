@@ -677,6 +677,41 @@ class FileUpload implements FileUploadInterface
     }
 
     /**
+     * @return string
+     */
+    public static function getUUID()
+    {
+        if (is_readable('/proc/sys/kernel/random/uuid')) {
+            return trim(file_get_contents('/proc/sys/kernel/random/uuid'));
+        }
+
+        if (function_exists('openssl_random_pseudo_bytes') === true) {
+            $data = openssl_random_pseudo_bytes(16);
+            $data[6] = chr(ord($data[6]) & 0x0f | 0x40); // set version to 0100
+            $data[8] = chr(ord($data[8]) & 0x3f | 0x80); // set bits 6-7 to 10
+
+            return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+        }
+
+        try {
+            return vsprintf('%s%s-%s-4000-8%.3s-%s%s%s0',str_split(dechex( microtime(true) * 1000 ) . bin2hex( random_bytes(8) ),4));
+        } catch (\Exception $e) {
+            mt_srand((float) microtime() * 10000);
+            $charid = strtolower(md5(uniqid(rand(), true)));
+            $hyphen = chr(45); // "-"
+            $guidv4 =
+                substr($charid, 0, 8).$hyphen.
+                substr($charid, 8, 4).$hyphen.
+                substr($charid, 12, 4).$hyphen.
+                substr($charid, 16, 4).$hyphen.
+                substr($charid, 20, 12);
+
+            return $guidv4;
+        }
+
+    }
+
+    /**
      * Get the data URL by the file path
      * https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs
      *
